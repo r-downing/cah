@@ -46,7 +46,7 @@
 								refresh();
 							});
 						}
-					})
+					}).hide().fadeIn("slow");
 				}
 			});
 		};
@@ -59,7 +59,7 @@
 					blackID = data['black']
 					let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
 					numAnswers = cardData["numAnswers"];
-					$('#black').html(cardData["text"]);
+					$('#black').html(cardData["text"]).hide().fadeIn("slow");
 					if (!data['revealed']) {
 						redraw();
 					}
