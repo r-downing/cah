@@ -7,50 +7,7 @@
 
 	<title>CAH</title>
 
-	<style>
-		body {
-			font-family: Helvetica, Arial, sans-serif;
-			font-weight: bold;
-		}
-
-		#black {
-			color: white;
-			background-color: black;
-		}
-
-		#black,
-		.whitecard {
-			width: 10em;
-			min-height: 5em;
-			display: flex;
-			/* align-items: center; */
-			margin: .5em;
-			padding: 1em;
-			border-radius: .75em;
-		}
-
-		@media screen and (min-width: 40em) {
-
-			#black,
-			.whitecard {
-				min-height: 10em;
-			}
-		}
-
-		.whitecard {
-			border: 1px solid black;
-		}
-
-		.whitecard:hover {
-			background-color: gray;
-		}
-
-		#whitecards,
-		#submitted {
-			display: flex;
-			flex-wrap: wrap;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="style.css">
 
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
@@ -102,7 +59,7 @@
 				if (black != data['black']) {
 					black = data['black']
 					$('#black').html(questionCards[(roomNumber + black) % questionCards.length]);
-					if(!data['revealed']){
+					if (!data['revealed']) {
 						redraw();
 					}
 				}

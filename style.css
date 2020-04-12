@@ -1,0 +1,42 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+}
+
+#black {
+    color: white;
+    background-color: black;
+}
+
+#black,
+.whitecard {
+    width: 10em;
+    min-height: 5em;
+    display: flex;
+    /* align-items: center; */
+    margin: .5em;
+    padding: 1em;
+    border-radius: .75em;
+}
+
+@media screen and (min-width: 40em) {
+
+    #black,
+    .whitecard {
+        min-height: 10em;
+    }
+}
+
+.whitecard {
+    border: 1px solid black;
+}
+
+.whitecard:hover {
+    background-color: gray;
+}
+
+#whitecards,
+#submitted {
+    display: flex;
+    flex-wrap: wrap;
+}
