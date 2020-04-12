@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>CAH</title>
+
+	<style>
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		#black {
+			color: white;
+			background-color: black;
+		}
+		#black, .whitecard
+		{
+			width: 20em;
+			height: 5em;
+			display: flex;
+			align-items: center;
+			margin: 1em;
+			padding: 1em;
+		}
+		.whitecard {
+			border: 1px solid black;
+		}
+		.whitecard:hover {
+			background-color: gray;
+		}
+	</style>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+	<script src="cards.js"></script>
+	<script>
+		var host = "https://rdowning.pythonanywhere.com/";
+		var roomNumber;
+		var black = null;
+		var draw = null;
+		var questionCards = [];
+		var answerCards = [];
+		var roomcode;
+
+		hashCode = function (s) {
+			return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+		}
+
+		function redraw() {
+			$.getJSON(host + "game/" + roomNumber + '/draw', function (data) {
+				console.log('draw ' + data);
+				$('#whitecards').empty();
+				for (let i = 0; i < 5; i++) {
+					let cid = ((roomNumber + 5 * data) + i) % answerCards.length
+					c = $('<div></div>').addClass('whitecard').html(answerCards[cid]).appendTo($('#whitecards')).click(function () {
+						$('#whitecards').empty();
+						$.getJSON(host + "game/" + roomNumber + '/submit/' + cid, function (data) {
+
+						});
+						console.log(i);
+					})
+				}
+			});
+		};
+
+
+		function refresh() {
+			$.getJSON(host + "game/" + roomNumber, function (data) {
+				console.log(data);
+				if (black != data['black']) {
+					black = data['black']
+					$('#black').html(questionCards[(roomNumber + black) % questionCards.length]);
+					redraw();
+				}
+				$('#submitted').empty();
+				$('#submitted').css('display', data['revealed'] ? 'block' : 'none');
+				$('#subcnt').html(data['submitted'].length);
+				data['submitted'].forEach(element => {
+					let d = $('<div></div>').addClass('whitecard').html(answerCards[element]).appendTo($('#submitted')).click(function()
+					{
+						$.getJSON(host + "game/" + roomNumber + '/winner/' + element, function (data) {
+							refresh();
+						});
+					});
+					if(data['winner'] == element)
+					{
+						d.css('background-color', 'green');
+					}
+				});
+				if(data['revealed'])
+				{
+					$('#whitecards').empty();
+				}
+			});
+		};
+
+		function newgame() {
+			$.getJSON(host + "game/" + roomNumber + '/new', function (data) {
+				refresh();
+			});
+		}
+
+		function reveal()
+		{
+			$.getJSON(host + "game/" + roomNumber + '/reveal', function (data) {
+				$('#submitted').css('display', 'block');
+			});
+		}
+
+
+		$(document).ready(() => {
+			rawcards.forEach(e => {
+				if (e["cardType"] == "A") {
+					answerCards.push(e["text"]);
+				}
+				else if (e["cardType"] == "Q" && e["numAnswers"] == 1) {
+					questionCards.push(e["text"]);
+				}
+			});
+			roomcode = prompt("enter room code:");
+			document.title = "Room code: " + roomcode;
+			roomNumber = hashCode(roomcode);
+			refresh();
+			$('#newgame').click(newgame);
+			$('#reveal').click(reveal);
+			setInterval(refresh, 5000);
+		});
+
+
+	</script>
+</head>
+
+<body>
+
+	<div id="black"></div>
+	<br />
+	Submitted: <span id="subcnt"></span>. <button id="reveal">Reveal</button>
+	<div id="submitted"></div>
+	<br />
+	<div id="whitecards"></div>
+	<br />
+	<button id='newgame'>new round</button>
+</body>
+
+</html>
