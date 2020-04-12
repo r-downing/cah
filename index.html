@@ -17,7 +17,6 @@
 	<script>
 		var roomNumber;
 		var black = null;
-		var draw = null;
 		var questionCards = [];
 		var answerCards = [];
 		var roomcode;
@@ -51,7 +50,6 @@
 						redraw();
 					}
 				}
-				// $('#submitted').empty();
 				$('#played .whitecard').remove();
 				if (data['revealed']) {
 					$('#played').removeClass('hiddencards');
@@ -90,7 +88,6 @@
 		function reveal() {
 			$.getJSON(host + "game/" + roomNumber + '/reveal', function (data) {
 				refresh();
-				// $('#submitted').css('display', 'block');
 			});
 		}
 
@@ -145,8 +142,6 @@
 
 	<div id="played" class="cardlist">
 		<div id="black"></div>
-		<!-- Submitted: <span id="subcnt"></span>. <button id="reveal">Reveal</button> -->
-		<!-- <div id="submitted" class="cardlist"></div> -->
 	</div>
 
 	<hr />
