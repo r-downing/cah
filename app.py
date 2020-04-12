@@ -48,7 +48,6 @@ def new_game(gid):
 def draw(gid):
     global game_data
     game_data[gid]['draw'] = game_data[gid]['draw'] + 1
-    print(game_data)
     response = jsonify(game_data[gid]['draw'])
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
