@@ -102,7 +102,9 @@
 				if (black != data['black']) {
 					black = data['black']
 					$('#black').html(questionCards[(roomNumber + black) % questionCards.length]);
-					redraw();
+					if(!data['revealed']){
+						redraw();
+					}
 				}
 				$('#submitted').empty();
 				$('#submitted').css('display', data['revealed'] ? 'flex' : 'none');
