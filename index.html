@@ -6,16 +6,17 @@
 	<title>CAH</title>
 
 	<style>
-
 		body {
 			font-family: Arial, Helvetica, sans-serif;
 		}
+
 		#black {
 			color: white;
 			background-color: black;
 		}
-		#black, .whitecard
-		{
+
+		#black,
+		.whitecard {
 			width: 20em;
 			height: 5em;
 			display: flex;
@@ -23,9 +24,11 @@
 			margin: 1em;
 			padding: 1em;
 		}
+
 		.whitecard {
 			border: 1px solid black;
 		}
+
 		.whitecard:hover {
 			background-color: gray;
 		}
@@ -45,6 +48,16 @@
 
 		hashCode = function (s) {
 			return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+		}
+
+		function xoshiro128ss(a, b, c, d) {
+			return function () {
+				var t = b << 9, r = a * 5; r = (r << 7 | r >>> 25) * 9;
+				c ^= a; d ^= b;
+				b ^= c; a ^= d; c ^= t;
+				d = d << 11 | d >>> 21;
+				return (r >>> 0) / 4294967296;
+			}
 		}
 
 		function redraw() {
@@ -77,19 +90,16 @@
 				$('#submitted').css('display', data['revealed'] ? 'block' : 'none');
 				$('#subcnt').html(data['submitted'].length);
 				data['submitted'].forEach(element => {
-					let d = $('<div></div>').addClass('whitecard').html(answerCards[element]).appendTo($('#submitted')).click(function()
-					{
+					let d = $('<div></div>').addClass('whitecard').html(answerCards[element]).appendTo($('#submitted')).click(function () {
 						$.getJSON(host + "game/" + roomNumber + '/winner/' + element, function (data) {
 							refresh();
 						});
 					});
-					if(data['winner'] == element)
-					{
+					if (data['winner'] == element) {
 						d.css('background-color', 'green');
 					}
 				});
-				if(data['revealed'])
-				{
+				if (data['revealed']) {
 					$('#whitecards').empty();
 				}
 			});
@@ -101,8 +111,7 @@
 			});
 		}
 
-		function reveal()
-		{
+		function reveal() {
 			$.getJSON(host + "game/" + roomNumber + '/reveal', function (data) {
 				$('#submitted').css('display', 'block');
 			});
@@ -121,6 +130,25 @@
 			roomcode = prompt("enter room code:");
 			document.title = "Room code: " + roomcode;
 			roomNumber = hashCode(roomcode);
+
+
+			rndfunc = xoshiro128ss(4, 5, 8, roomNumber);
+			for(var i = 0; i < answerCards.length; i++)
+			{
+				var tmp = answerCards[i];
+				r = Math.floor(rndfunc() * answerCards.length);
+				answerCards[i] = answerCards[r];
+				answerCards[r] = tmp;
+			}
+
+			for(var i = 0; i < questionCards.length; i++)
+			{
+				var tmp = questionCards[i];
+				r = Math.floor(rndfunc() * questionCards.length);
+				questionCards[i] = questionCards[r];
+				questionCards[r] = tmp;
+			}
+
 			refresh();
 			$('#newgame').click(newgame);
 			$('#reveal').click(reveal);
