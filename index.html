@@ -65,32 +65,26 @@
 					}
 				}
 				$('#played .whitecard').remove();
+				if(!data['revealed'] && data['submitted'].length)
+				{
+					$('<div></div>').addClass('whitecard').attr('id', 'counter').appendTo('#played').html(data['submitted'].length).click(function() {
+						reveal();
+					});
+				}
 				if (data['revealed']) {
-					$('#played').removeClass('hiddencards');
-				}
-				else {
-					$('#played').addClass('hiddencards');
-				}
-				$('#subcnt').html(data['submitted'].length);
-				data['submitted'].forEach(element => {
+					$('#whitecards').empty();
+					data['submitted'].forEach(element => {
 					cardIDs = element.split('_').map(x => parseInt(x));
 					txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
 					let d = $('<div></div>').addClass('whitecard').html(txt).appendTo($('#played')).click(function () {
-						if (data['revealed']) {
 							$.getJSON(host + "game/" + roomNumber + '/winner/' + element, function (data) {
 								refresh();
 							});
-						}
-						else {
-							reveal();
-						}
 					});
 					if (data['winner'] == element) {
 						d.css('background-color', 'green');
 					}
 				});
-				if (data['revealed']) {
-					$('#whitecards').empty();
 				}
 			});
 		};

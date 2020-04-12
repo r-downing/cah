@@ -44,9 +44,13 @@ body {
     flex-wrap: wrap;
 }
 
-.hiddencards .whitecard {
-    color: white;
+
+
+#counter {
+    font-style: italic;
+    color: lightgray;
 }
+
 
 .multiselect {
     color: orange;
