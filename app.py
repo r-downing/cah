@@ -53,18 +53,13 @@ def draw(gid):
     return response
 
 
-@app.route('/game/<int:gid>/submit/<int:sid>')
+@app.route('/game/<int:gid>/submit/<sid>')
 def submit(gid, sid):
     global game_data
     game_data[gid]['submitted'].append(sid)
     response = jsonify(True)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
-
-@app.route('/game/<int:gid>/submit2/<int:s1>/<int:s2>')
-def submit2(gid, s1, s2):
-    return submit(gid, [s1, s2])
 
 
 @app.route('/game/<int:gid>/reveal')
@@ -76,7 +71,7 @@ def reveal(gid):
     return response
 
 
-@app.route('/game/<int:gid>/winner/<int:sid>')
+@app.route('/game/<int:gid>/winner/<sid>')
 def winner(gid, sid):
     global game_data
     game_data[gid]['winner'] = sid

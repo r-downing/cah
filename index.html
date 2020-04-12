@@ -16,10 +16,12 @@
 	<script src="utils.js"></script>
 	<script>
 		var roomNumber;
-		var black = null;
+		var blackID = null;
 		var questionCards = [];
 		var answerCards = [];
 		var roomcode;
+		var numAnswers = 1;
+		var multiselected = [];
 
 
 		function redraw() {
@@ -28,12 +30,22 @@
 				$('#whitecards').empty();
 				for (let i = 0; i < 5; i++) {
 					let cid = ((roomNumber + 5 * data) + i) % answerCards.length
-					c = $('<div></div>').addClass('whitecard').html(answerCards[cid]).appendTo($('#whitecards')).click(function () {
-						$('#whitecards').empty();
-						$.getJSON(host + "game/" + roomNumber + '/submit/' + cid, function (data) {
-							refresh();
-						});
-						console.log(i);
+					c = $('<div></div>').addClass('whitecard').html(answerCards[cid]).appendTo($('#whitecards')).click(function (event) {
+						let target = $(event.target);
+						if (target.hasClass('multiselect')) {
+							multiselected = [];
+						}
+						else {
+							multiselected.push(cid);
+						}
+						target.toggleClass('multiselect');
+						if (multiselected.length == numAnswers) {
+							$('#whitecards').empty();
+							$.getJSON(host + "game/" + roomNumber + '/submit/' + multiselected.join('_'), function (data) {
+								multiselected = [];
+								refresh();
+							});
+						}
 					})
 				}
 			});
@@ -43,9 +55,11 @@
 		function refresh() {
 			$.getJSON(host + "game/" + roomNumber, function (data) {
 				console.log(data);
-				if (black != data['black']) {
-					black = data['black']
-					$('#black').html(questionCards[(roomNumber + black) % questionCards.length]);
+				if (blackID != data['black']) {
+					blackID = data['black']
+					let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
+					numAnswers = cardData["numAnswers"];
+					$('#black').html(cardData["text"]);
 					if (!data['revealed']) {
 						redraw();
 					}
@@ -59,7 +73,9 @@
 				}
 				$('#subcnt').html(data['submitted'].length);
 				data['submitted'].forEach(element => {
-					let d = $('<div></div>').addClass('whitecard').html(answerCards[element]).appendTo($('#played')).click(function () {
+					cardIDs = element.split('_').map(x => parseInt(x));
+					txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
+					let d = $('<div></div>').addClass('whitecard').html(txt).appendTo($('#played')).click(function () {
 						if (data['revealed']) {
 							$.getJSON(host + "game/" + roomNumber + '/winner/' + element, function (data) {
 								refresh();
@@ -97,8 +113,8 @@
 				if (e["cardType"] == "A") {
 					answerCards.push(e["text"]);
 				}
-				else if (e["cardType"] == "Q" && e["numAnswers"] == 1) {
-					questionCards.push(e["text"]);
+				else if (e["cardType"] == "Q" && e["numAnswers"] <= 2) {
+					questionCards.push(e);
 				}
 			});
 			if (window.location.href.indexOf('?') == -1) {

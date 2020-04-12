@@ -17,8 +17,6 @@ body {
 .whitecard {
     width: 10em;
     min-height: 5em;
-    display: flex;
-    /* align-items: center; */
     margin: .5em;
     padding: 1em;
     border-radius: .75em;
@@ -48,4 +46,8 @@ body {
 
 .hiddencards .whitecard {
     color: white;
+}
+
+.multiselect {
+    color: orange;
 }
