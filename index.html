@@ -21,11 +21,19 @@
 		#black,
 		.whitecard {
 			width: 10em;
-			height: 10em;
+			min-height: 5em;
 			display: flex;
 			/* align-items: center; */
-			margin: 1em;
+			margin: .5em;
 			padding: 1em;
+		}
+
+		@media screen and (min-width: 40em) {
+
+			#black,
+			.whitecard {
+				min-height: 10em;
+			}
 		}
 
 		.whitecard {
@@ -36,7 +44,8 @@
 			background-color: gray;
 		}
 
-		#whitecards, #submitted {
+		#whitecards,
+		#submitted {
 			display: flex;
 			flex-wrap: wrap;
 		}
@@ -141,16 +150,14 @@
 
 
 			rndfunc = xoshiro128ss(4, 5, 8, roomNumber);
-			for(var i = 0; i < answerCards.length; i++)
-			{
+			for (var i = 0; i < answerCards.length; i++) {
 				var tmp = answerCards[i];
 				r = Math.floor(rndfunc() * answerCards.length);
 				answerCards[i] = answerCards[r];
 				answerCards[r] = tmp;
 			}
 
-			for(var i = 0; i < questionCards.length; i++)
-			{
+			for (var i = 0; i < questionCards.length; i++) {
 				var tmp = questionCards[i];
 				r = Math.floor(rndfunc() * questionCards.length);
 				questionCards[i] = questionCards[r];
