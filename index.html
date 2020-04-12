@@ -17,8 +17,8 @@
 
 		#black,
 		.whitecard {
-			width: 20em;
-			height: 5em;
+			width: 10em;
+			height: 10em;
 			display: flex;
 			align-items: center;
 			margin: 1em;
@@ -31,6 +31,11 @@
 
 		.whitecard:hover {
 			background-color: gray;
+		}
+
+		#whitecards, #submitted {
+			display: flex;
+			flex-wrap: wrap;
 		}
 	</style>
 
@@ -87,7 +92,7 @@
 					redraw();
 				}
 				$('#submitted').empty();
-				$('#submitted').css('display', data['revealed'] ? 'block' : 'none');
+				$('#submitted').css('display', data['revealed'] ? 'flex' : 'none');
 				$('#subcnt').html(data['submitted'].length);
 				data['submitted'].forEach(element => {
 					let d = $('<div></div>').addClass('whitecard').html(answerCards[element]).appendTo($('#submitted')).click(function () {
