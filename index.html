@@ -59,7 +59,7 @@
 					blackID = data['black']
 					let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
 					numAnswers = cardData["numAnswers"];
-					$('#black').html(cardData["text"]).hide().fadeIn("slow");
+					$('#black').html(cardData["text"].replace(/_/g, '_____')).hide().fadeIn("slow");
 					if (!data['revealed']) {
 						redraw();
 					}
