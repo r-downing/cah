@@ -62,6 +62,11 @@ def submit(gid, sid):
     return response
 
 
+@app.route('/game/<int:gid>/submit2/<int:s1>/<int:s2>')
+def submit2(gid, s1, s2):
+    return submit(gid, [s1, s2])
+
+
 @app.route('/game/<int:gid>/reveal')
 def reveal(gid):
     global game_data
