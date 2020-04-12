@@ -145,7 +145,14 @@
 					questionCards.push(e["text"]);
 				}
 			});
-			roomcode = prompt("enter room code:");
+			if (window.location.href.indexOf('?') == -1) {
+				roomcode = encodeURIComponent(prompt("enter room code:"));
+				window.location.href = window.location.href + '?' + roomcode;
+			}
+			else {
+				roomcode = window.location.href.substring(window.location.href.lastIndexOf('?') + 1);
+			}
+
 			document.title = "Room code: " + roomcode;
 			roomNumber = hashCode(roomcode);
 
