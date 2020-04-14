@@ -51,6 +51,14 @@ body {
 #counter {
     font-style: italic;
     color: lightgray;
+
+}
+
+.empty {
+    color: black;
+    background-color: black;
+    border: 1px dashed white;
+    opacity: .5;
 }
 
 

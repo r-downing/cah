@@ -66,22 +66,43 @@
 				}
 			}
 			$('#played .answer').remove();
+			$('#counter').remove();
 
+			if (data['submitted'].length > data['revealed']) {
+				jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length - data['revealed']).click(() => serverRequest('/reveal', refresh));
+			}
+			else {
+				jcreate('div', 'empty card', 'counter').appendTo('#played');
+			}
 			if (data['revealed']) {
 				$('#hand').empty();
-				data['submitted'].forEach(element => {
-					cardIDs = element.split('_').map(x => parseInt(x));
+				for (let i = 0; (i < data['revealed']) && (i < data['submitted'].length); i++) {
+					cardIDs = data['submitted'][i].split('_').map(x => parseInt(x));
 					txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
 					let d = jcreate('div', 'answer card').html(txt).appendTo($('#played')).click(function () {
-						serverRequest('/winner/' + element, refresh);
+						console.log(data)
+						if (data['revealed'] >= data['submitted'].length) {
+							serverRequest('/winner/' + data['submitted'][i], refresh);
+						}
 					});
-					if (data['winner'] == element) {
+					if (data['winner'] == data['submitted'][i]) {
 						d.css('background-color', 'green');
 					}
-				});
-			} else if (data['submitted'].length) {
-				jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length).click(() => serverRequest('/reveal', refresh));
-			}
+				}
+				// data['submitted'].forEach(element, index => {
+				// 	cardIDs = element.split('_').map(x => parseInt(x));
+				// 	txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
+				// 	let d = jcreate('div', 'answer card').html(txt).appendTo($('#played')).click(function () {
+				// 		serverRequest('/winner/' + element, refresh);
+				// 	});
+				// 	if (data['winner'] == element) {
+				// 		d.css('background-color', 'green');
+				// 	}
+				// });
+			} 
+			// else if (data['submitted'].length) {
+			// 	jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length).click(() => serverRequest('/reveal', refresh));
+			// }
 
 		};
 
