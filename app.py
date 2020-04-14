@@ -27,7 +27,7 @@ def game_status(gid):
     global game_data
     global active
     if gid not in game_data:
-        game_data[gid] = {'draw': 0, 'black': 0, 'submitted': []}
+        game_data[gid] = {'draw': 0, 'black': 0, 'submitted': [], 'revealed': 0}
     active[gid] = game_data[gid]
     response = jsonify(game_data[gid])
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -48,33 +48,25 @@ def new_game(gid):
 def draw(gid):
     global game_data
     game_data[gid]['draw'] = game_data[gid]['draw'] + 1
-    response = jsonify(game_data[gid]['draw'])
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    return game_status(gid)
 
 
 @app.route('/game/<int:gid>/submit/<sid>')
 def submit(gid, sid):
     global game_data
     game_data[gid]['submitted'].append(sid)
-    response = jsonify(True)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    return game_status(gid)
 
 
 @app.route('/game/<int:gid>/reveal')
 def reveal(gid):
     global game_data
-    game_data[gid]['revealed'] = 1
-    response = jsonify(True)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    game_data[gid]['revealed'] += 1
+    return game_status(gid)
 
 
 @app.route('/game/<int:gid>/winner/<sid>')
 def winner(gid, sid):
     global game_data
     game_data[gid]['winner'] = sid
-    response = jsonify(True)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    return game_status(gid)

@@ -30,10 +30,10 @@
 
 		function newHand() {
 			serverRequest('/draw', function (data) {
-				console.log('draw ' + data);
+				multiselected = [];
 				$('#hand').empty();
 				for (let i = 0; i < 5; i++) {
-					let cid = ((roomNumber + 5 * data) + i) % answerCards.length;
+					let cid = ((roomNumber + 5 * data["draw"]) + i) % answerCards.length;
 					c = jcreate('div', 'answer card').html(answerCards[cid]).appendTo($('#hand')).click(function (event) {
 						let target = $(event.target);
 						if (target.hasClass('multiselect')) {
@@ -45,10 +45,7 @@
 						target.toggleClass('multiselect');
 						if (multiselected.length == numAnswers) {
 							$('#hand').empty();
-							$.getJSON(host + "game/" + roomNumber + '/submit/' + multiselected.join('_'), function (data) {
-								multiselected = [];
-								refresh();
-							});
+							serverRequest('/submit/' + multiselected.join('_'), refresh);
 						}
 					}).hide().fadeIn("slow");
 				}
@@ -56,39 +53,37 @@
 		};
 
 
-		function refresh() {
-			serverRequest("", function (data) {
-				console.log(data);
-				if (blackID != data['black']) {
-					blackID = data['black']
-					let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
-					numAnswers = cardData["numAnswers"];
-					$('#questioncard').html(cardData["text"].replace(/_/g, '_____')).hide().fadeIn("slow");
-					if (!data['revealed']) {
-						newHand();
-					}
-				}
-				$('#played .answer').remove();
+		function refresh(data) {
 
-				if (data['revealed']) {
-					$('#hand').empty();
-					data['submitted'].forEach(element => {
-						cardIDs = element.split('_').map(x => parseInt(x));
-						txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
-						let d = jcreate('div', 'answer card').html(txt).appendTo($('#played')).click(function () {
-							serverRequest('/winner/' + element, refresh);
-						});
-						if (data['winner'] == element) {
-							d.css('background-color', 'green');
-						}
+			console.log(data);
+			if (blackID != data['black']) {
+				blackID = data['black']
+				let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
+				numAnswers = cardData["numAnswers"];
+				$('#questioncard').html(cardData["text"].replace(/_/g, '_____')).hide().fadeIn("slow");
+				if (!data['revealed']) {
+					newHand();
+				}
+			}
+			$('#played .answer').remove();
+
+			if (data['revealed']) {
+				$('#hand').empty();
+				data['submitted'].forEach(element => {
+					cardIDs = element.split('_').map(x => parseInt(x));
+					txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
+					let d = jcreate('div', 'answer card').html(txt).appendTo($('#played')).click(function () {
+						serverRequest('/winner/' + element, refresh);
 					});
-				} else if (data['submitted'].length) {
-					jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length).click(() => serverRequest('/reveal', refresh));
-				}
-			});
+					if (data['winner'] == element) {
+						d.css('background-color', 'green');
+					}
+				});
+			} else if (data['submitted'].length) {
+				jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length).click(() => serverRequest('/reveal', refresh));
+			}
+
 		};
-
-
 
 
 		$(document).ready(() => {
@@ -127,9 +122,9 @@
 				questionCards[r] = tmp;
 			}
 
-			refresh();
+			serverRequest("", refresh);
 			$('#questioncard').click(() => serverRequest('/new', refresh));
-			setInterval(refresh, 4000);
+			setInterval(() => serverRequest("", refresh), 4000);
 		});
 
 
