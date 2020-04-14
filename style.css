@@ -41,41 +41,6 @@ body {
 }
 
 
-/* #black {
-    color: white;
-    background-color: black;
-}
-
-#black:hover {
-    background-color: red;
-}
-
-#black,
-.whitecard {
-    width: 10em;
-    min-height: 5em;
-    margin: .5em;
-    padding: 1em;
-    border-radius: .75em;
-    border: 1px solid black;
-}
-
-@media screen and (min-width: 40em) {
-    body {
-        font-size: 100%;
-    }
-
-    #black,
-    .whitecard {
-        min-height: 10em;
-    }
-    
-} */
-
-/* .whitecard:hover {
-    background-color: gray;
-} */
-
 .cardlist {
     display: flex;
     flex-wrap: wrap;
