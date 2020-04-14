@@ -27,7 +27,7 @@ def game_status(gid):
     global game_data
     global active
     if gid not in game_data:
-        game_data[gid] = {'draw': 0, 'black': 0, 'submitted': [], 'revealed': 0}
+        game_data[gid] = {'draw': 0, 'black': 0, 'submitted': [], 'revealed': 0, 'start': int(time.time())}
     active[gid] = game_data[gid]
     response = jsonify(game_data[gid])
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -37,10 +37,13 @@ def game_status(gid):
 @app.route('/game/<int:gid>/new')
 def new_game(gid):
     global game_data
-    game_data[gid]['black'] = game_data[gid]['black'] + 1
-    game_data[gid]['submitted'] = []
-    game_data[gid]['winner'] = None
-    game_data[gid]['revealed'] = 0
+    now = int(time.time())
+    if now - game_data[gid]['start'] > 5:
+        game_data[gid]['black'] = game_data[gid]['black'] + 1
+        game_data[gid]['submitted'] = []
+        game_data[gid]['winner'] = None
+        game_data[gid]['revealed'] = 0
+        game_data[gid]['start'] = now
     return game_status(gid)
 
 
