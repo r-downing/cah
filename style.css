@@ -2,9 +2,46 @@ body {
     font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 90%;
+    background-color: black;
 }
 
-#black {
+.card {
+    width: 10em;
+    min-height: 5em;
+    margin: .5em;
+    padding: 1em;
+    border-radius: .75em;
+    border: 1px solid;
+}
+
+.card:hover {
+    opacity: .5;
+}
+
+.question {
+    color: white;
+    background-color: black;
+    border-color: white;
+}
+
+.answer {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+
+@media screen and (min-width: 40em) {
+    body {
+        font-size: 100%;
+    }
+
+    .card {
+        min-height: 10em;
+    }
+}
+
+
+/* #black {
     color: white;
     background-color: black;
 }
@@ -33,11 +70,11 @@ body {
         min-height: 10em;
     }
     
-}
+} */
 
-.whitecard:hover {
+/* .whitecard:hover {
     background-color: gray;
-}
+} */
 
 .cardlist {
     display: flex;

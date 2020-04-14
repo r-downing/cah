@@ -23,14 +23,18 @@
 		var numAnswers = 1;
 		var multiselected = [];
 
+		function serverRequest(path = "", jsonCallback) {
+			$.getJSON(host + "game/" + roomNumber + path, jsonCallback);
+		}
 
-		function redraw() {
-			$.getJSON(host + "game/" + roomNumber + '/draw', function (data) {
+
+		function newHand() {
+			serverRequest('/draw', function (data) {
 				console.log('draw ' + data);
-				$('#whitecards').empty();
+				$('#hand').empty();
 				for (let i = 0; i < 5; i++) {
-					let cid = ((roomNumber + 5 * data) + i) % answerCards.length
-					c = $('<div></div>').addClass('whitecard').html(answerCards[cid]).appendTo($('#whitecards')).click(function (event) {
+					let cid = ((roomNumber + 5 * data) + i) % answerCards.length;
+					c = jcreate('div', 'answer card').html(answerCards[cid]).appendTo($('#hand')).click(function (event) {
 						let target = $(event.target);
 						if (target.hasClass('multiselect')) {
 							multiselected = [];
@@ -40,7 +44,7 @@
 						}
 						target.toggleClass('multiselect');
 						if (multiselected.length == numAnswers) {
-							$('#whitecards').empty();
+							$('#hand').empty();
 							$.getJSON(host + "game/" + roomNumber + '/submit/' + multiselected.join('_'), function (data) {
 								multiselected = [];
 								refresh();
@@ -53,53 +57,38 @@
 
 
 		function refresh() {
-			$.getJSON(host + "game/" + roomNumber, function (data) {
+			serverRequest("", function (data) {
 				console.log(data);
 				if (blackID != data['black']) {
 					blackID = data['black']
 					let cardData = questionCards[(roomNumber + blackID) % questionCards.length];
 					numAnswers = cardData["numAnswers"];
-					$('#black').html(cardData["text"].replace(/_/g, '_____')).hide().fadeIn("slow");
+					$('#questioncard').html(cardData["text"].replace(/_/g, '_____')).hide().fadeIn("slow");
 					if (!data['revealed']) {
-						redraw();
+						newHand();
 					}
 				}
-				$('#played .whitecard').remove();
-				if(!data['revealed'] && data['submitted'].length)
-				{
-					$('<div></div>').addClass('whitecard').attr('id', 'counter').appendTo('#played').html(data['submitted'].length).click(function() {
-						reveal();
-					});
-				}
+				$('#played .answer').remove();
+
 				if (data['revealed']) {
-					$('#whitecards').empty();
+					$('#hand').empty();
 					data['submitted'].forEach(element => {
-					cardIDs = element.split('_').map(x => parseInt(x));
-					txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
-					let d = $('<div></div>').addClass('whitecard').html(txt).appendTo($('#played')).click(function () {
-							$.getJSON(host + "game/" + roomNumber + '/winner/' + element, function (data) {
-								refresh();
-							});
+						cardIDs = element.split('_').map(x => parseInt(x));
+						txt = cardIDs.map(x => answerCards[x]).join('<p>-----</p>')
+						let d = jcreate('div', 'answer card').html(txt).appendTo($('#played')).click(function () {
+							serverRequest('/winner/' + element, refresh);
+						});
+						if (data['winner'] == element) {
+							d.css('background-color', 'green');
+						}
 					});
-					if (data['winner'] == element) {
-						d.css('background-color', 'green');
-					}
-				});
+				} else if (data['submitted'].length) {
+					jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length).click(() => serverRequest('/reveal', refresh));
 				}
 			});
 		};
 
-		function newgame() {
-			$.getJSON(host + "game/" + roomNumber + '/new', function (data) {
-				refresh();
-			});
-		}
 
-		function reveal() {
-			$.getJSON(host + "game/" + roomNumber + '/reveal', function (data) {
-				refresh();
-			});
-		}
 
 
 		$(document).ready(() => {
@@ -116,7 +105,7 @@
 				window.location.href = window.location.href + '?' + roomcode;
 			}
 			else {
-				roomcode = window.location.href.substring(window.location.href.lastIndexOf('?') + 1);
+				roomcode = window.location.href.substring(window.location.href.indexOf('?') + 1);
 			}
 
 			document.title = "Room code: " + roomcode;
@@ -139,8 +128,7 @@
 			}
 
 			refresh();
-			$('#black').click(newgame);
-			$('#reveal').click(reveal);
+			$('#questioncard').click(() => serverRequest('/new', refresh));
 			setInterval(refresh, 4000);
 		});
 
@@ -151,12 +139,12 @@
 <body>
 
 	<div id="played" class="cardlist">
-		<div id="black"></div>
+		<div id="questioncard" class="question card"></div>
 	</div>
 
 	<hr />
 
-	<div id="whitecards" class="cardlist"></div>
+	<div id="hand" class="cardlist"></div>
 
 </body>
 

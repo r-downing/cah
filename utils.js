@@ -11,3 +11,7 @@ function xoshiro128ss(a, b, c, d) {
         return (r >>> 0) / 4294967296;
     }
 }
+
+function jcreate(element, classes, id = "") {
+    return $(document.createElement(element)).addClass(classes).attr("id", id);
+}
