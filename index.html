@@ -38,11 +38,12 @@
 						let target = $(event.target);
 						if (target.hasClass('multiselect')) {
 							multiselected = [];
+							$('.multiselect').removeClass('multiselect');
 						}
 						else {
 							multiselected.push(cid);
+							target.addClass('multiselect');
 						}
-						target.toggleClass('multiselect');
 						if (multiselected.length == numAnswers) {
 							$('#hand').empty();
 							serverRequest('/submit/' + multiselected.join('_'), refresh);
@@ -89,7 +90,7 @@
 						d.css('background-color', 'green');
 					}
 				}
-			} 
+			}
 		};
 
 
@@ -98,7 +99,7 @@
 				if (e["cardType"] == "A") {
 					answerCards.push(e["text"]);
 				}
-				else if (e["cardType"] == "Q" && e["numAnswers"] <= 2) {
+				else if (e["cardType"] == "Q") {
 					questionCards.push(e);
 				}
 			});
