@@ -102,12 +102,10 @@
 					questionCards.push(e);
 				}
 			});
-			if (window.location.href.indexOf('?') == -1) {
+			roomcode = new URLSearchParams(window.location.search).get('roomcode');
+			if (!roomcode) {
 				roomcode = encodeURIComponent(prompt("enter room code:"));
-				window.location.href = window.location.href + '?' + roomcode;
-			}
-			else {
-				roomcode = window.location.href.substring(window.location.href.indexOf('?') + 1);
+				window.location.href = window.location.href.split('?')[0] + '?' + 'roomcode=' + roomcode;
 			}
 
 			document.title = "Room code: " + roomcode;
@@ -141,7 +139,7 @@
 <body>
 
 	<div id="played" class="cardlist">
-		<div id="questioncard" class="question card"></div>
+		<div id="questioncard" class="question card">loading...</div>
 	</div>
 
 	<hr />
