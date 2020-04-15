@@ -61,6 +61,10 @@ body {
     opacity: .5;
 }
 
+.stack {
+    box-shadow: 5px 3px lightgray;
+}
+
 
 .multiselect {
     color: orange;

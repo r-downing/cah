@@ -70,7 +70,10 @@
 			$('#counter').remove();
 
 			if (data['submitted'].length > data['revealed']) {
-				jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length - data['revealed']).click(() => serverRequest('/reveal', refresh));
+				let s =jcreate('div', 'answer card', 'counter').appendTo('#played').html(data['submitted'].length - data['revealed']).click(() => serverRequest('/reveal', refresh));
+				if(data['submitted'].length - data['revealed'] > 1) {
+					s.addClass('stack');
+				}
 			}
 			else {
 				jcreate('div', 'empty card', 'counter').appendTo('#played');
