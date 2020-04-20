@@ -6,8 +6,7 @@ body {
 }
 
 .card {
-    width: 10em;
-    min-height: 5em;
+    min-height: 1.5em;
     margin: .5em;
     padding: 1em;
     border-radius: .75em;
@@ -30,20 +29,26 @@ body {
     border-color: black;
 }
 
-@media screen and (min-width: 40em) {
+
+.cardlist {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+@media only screen and (min-width: 600px) {
+    .cardlist {
+        flex-direction: row;
+    }
+
     body {
         font-size: 100%;
     }
 
     .card {
-        min-height: 10em;
+        min-height: 8em;
+        width: 10em;
     }
-}
-
-
-.cardlist {
-    display: flex;
-    flex-wrap: wrap;
 }
 
 
